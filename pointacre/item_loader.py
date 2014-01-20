@@ -14,5 +14,4 @@ def name_filter(item):
     return item
 
 class UserLoader(ItemLoader):
-    username_in=MapCompose(encode_text)
-    username_out=MapCompose(name_filter)
+    default_output_processor = MapCompose(encode_text)

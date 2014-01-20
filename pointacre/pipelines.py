@@ -8,13 +8,19 @@ from scrapy.exceptions import DropItem
 
 
 class PointacrePipeline(object):
+    users={}
     def __init__(self):
-        pass
-        # self.file=open('export.csv','wb')
-        # self.exporter=CsvItemExporter(self.file)
+        self.file=open('export.csv','wb')
+        self.exporter=CsvItemExporter(self.file)
+
     def process_item(self, item, spider):
-        if item['username']:
-            # self.exporter.export_item(item)
-            return item
+        if spider.name=="1point3acres.user":
+            if item.has_key('uid') and item['uid']:
+                uid=item['uid'][0]
+                if uid not in PointacrePipeline.users:
+                    PointacrePipeline.users[uid]=True
+                    self.exporter.export_item(item)
+                else:
+                    raise DropItem()
         else:
-            raise DropItem("Chinese name %s dropped." % item)
+            return item

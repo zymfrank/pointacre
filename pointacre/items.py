@@ -12,8 +12,14 @@ import re
 class UserItem(Item):
     # define the fields for your item here like:
     # name = Field()
+    uid=Field()
     username=Field()
-    passwrod=Field()
+    role=Field()
+    gradepoint=Field()
+    permission=Field()
+    credit=Field()
+
 
 class LoginItem(Item):
-    message=Field()
+    username=Field()
+    password=Field()

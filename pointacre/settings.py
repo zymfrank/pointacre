@@ -11,15 +11,22 @@ BOT_NAME = 'pointacre'
 SPIDER_MODULES = ['pointacre.spiders']
 NEWSPIDER_MODULE = 'pointacre.spiders'
 
-FEED_URI='export.csv'
-FEED_FORMAT='csv'
+# FEED_URI='userinfo.csv'
+# FEED_FORMAT='csv'
 
 ITEM_PIPELINES={
     'pointacre.pipelines.PointacrePipeline':100
 }
 LOG_ENABLED=True
 LOG_LEVEL='INFO'
+LOG_FILE='pointacre.log'
+
 USER_AGENT='Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36'
 COOKIES_ENABLED=False
+
+RANDOMIZE_DOWNLOAD_DELAY=True
+DOWNLOAD_DELAY = 0.2
+
+STATS_DUMP=False
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'pointacre (+http://www.yourdomain.com)'
